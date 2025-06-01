@@ -3,38 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doodle Launcher</title>
+    <title>Игровой Лаунчер</title>
     <style>
         :root {
-            --main-color: #FF6B6B;
-            --bg-color: #FFF5E6;
-            --card-color: #FFF;
-            --text-color: #333;
-            --shadow: 3px 3px 0 rgba(0,0,0,0.2);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            user-select: none;
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --card-color: #ffffff;
         }
 
         body {
-            background-color: var(--bg-color);
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
             color: var(--text-color);
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255,200,200,0.2) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(200,255,200,0.2) 0%, transparent 20%);
+            transition: all 0.3s ease;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            min-height: 100vh;
         }
 
         header {
@@ -42,108 +33,92 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 3px dashed var(--main-color);
         }
 
         h1 {
-            font-size: 2.5rem;
-            color: var(--main-color);
-            text-shadow: var(--shadow);
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 10px;
         }
 
         .theme-btn {
-            width: 40px;
-            height: 40px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background: var(--main-color);
-            border: 2px solid var(--text-color);
+            border: 2px solid #fff;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.2);
         }
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
         }
 
         .game-card {
-            background: var(--card-color);
-            border: 3px solid var(--text-color);
-            border-radius: 15px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: var(--shadow);
-            position: relative;
+            background-color: var(--card-color);
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
         }
 
         .game-card:hover {
             transform: translateY(-5px);
-            box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
-        .game-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--main-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 30px;
-            border: 2px solid var(--text-color);
+        .game-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .game-info {
+            padding: 15px;
         }
 
         .game-title {
-            font-size: 1.5rem;
-            text-align: center;
-            margin-bottom: 10px;
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
         }
 
-        .game-desc {
-            text-align: center;
-            opacity: 0.8;
-            font-size: 0.9rem;
+        .game-description {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-color);
         }
 
-        /* Оверлей игры */
-        .game-overlay {
+        /* Модальное окно для игры */
+        .game-modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
         }
 
-        .game-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .game-container {
-            background: var(--card-color);
-            border: 3px solid var(--text-color);
-            border-radius: 15px;
+        .game-content {
+            background-color: white;
             padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
             width: 90%;
-            max-width: 600px;
             max-height: 90vh;
             overflow: auto;
             position: relative;
@@ -153,1015 +128,1981 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--main-color);
-            border: 2px solid var(--text-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 24px;
             cursor: pointer;
-            font-weight: bold;
+            background: none;
+            border: none;
         }
 
         /* Темы */
-        .dark-theme {
-            --main-color: #6B6BFF;
-            --bg-color: #222;
-            --card-color: #333;
-            --text-color: #EEE;
+        .theme-default {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --card-color: #ffffff;
         }
 
-        .green-theme {
-            --main-color: #4CAF50;
-            --bg-color: #E8F5E9;
-            --card-color: #C8E6C9;
-            --text-color: #2E7D32;
+        .theme-dark {
+            --primary-color: #9b59b6;
+            --secondary-color: #8e44ad;
+            --background-color: #2c3e50;
+            --text-color: #ecf0f1;
+            --card-color: #34495e;
         }
 
-        .pink-theme {
-            --main-color: #FF4081;
-            --bg-color: #FCE4EC;
-            --card-color: #F8BBD0;
-            --text-color: #AD1457;
+        .theme-ocean {
+            --primary-color: #1abc9c;
+            --secondary-color: #16a085;
+            --background-color: #d1f2eb;
+            --text-color: #0e6251;
+            --card-color: #a3e4d7;
         }
 
-        /* Анимации */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .theme-forest {
+            --primary-color: #27ae60;
+            --secondary-color: #219653;
+            --background-color: #d5f5e3;
+            --text-color: #196f3d;
+            --card-color: #a9dfbf;
         }
 
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        .theme-sunset {
+            --primary-color: #e74c3c;
+            --secondary-color: #c0392b;
+            --background-color: #fadbd8;
+            --text-color: #922b21;
+            --card-color: #f5b7b1;
+        }
+
+        /* Стили для игр */
+        #game-container {
+            margin-top: 20px;
+        }
+
+        #snake-canvas, #tetris-canvas, #pong-canvas, #breakout-canvas {
+            background-color: #f0f0f0;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #tic-tac-toe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+            width: 310px;
+        }
+
+        .tic-tac-toe-cell {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+        }
+
+        #memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-template-rows: repeat(4, 100px);
+            gap: 10px;
+            margin: 20px auto;
+            width: 440px;
+        }
+
+        .memory-card {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .memory-card.flipped {
+            background-color: white;
+            color: #2c3e50;
+        }
+
+        #hangman-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #hangman-word {
+            font-size: 32px;
+            letter-spacing: 10px;
+            margin: 20px 0;
+        }
+
+        #hangman-letters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .hangman-letter {
+            width: 40px;
+            height: 40px;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .hangman-letter.used {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        #dino-container {
+            position: relative;
+            width: 600px;
+            height: 200px;
+            margin: 20px auto;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        #dino {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            bottom: 0;
+            left: 50px;
+            background-color: #333;
+        }
+
+        #cactus {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            bottom: 0;
+            right: 0;
+            background-color: #27ae60;
         }
     </style>
 </head>
-<body class="default-theme">
+<body class="theme-default">
     <div class="container">
         <header>
-            <h1>Doodle Launcher</h1>
-            <div class="theme-btn" id="themeBtn">🎨</div>
+            <h1>Игровой Лаунчер</h1>
+            <div class="theme-selector">
+                <div class="theme-btn" style="background: #3498db;" onclick="changeTheme('theme-default')"></div>
+                <div class="theme-btn" style="background: #9b59b6;" onclick="changeTheme('theme-dark')"></div>
+                <div class="theme-btn" style="background: #1abc9c;" onclick="changeTheme('theme-ocean')"></div>
+                <div class="theme-btn" style="background: #27ae60;" onclick="changeTheme('theme-forest')"></div>
+                <div class="theme-btn" style="background: #e74c3c;" onclick="changeTheme('theme-sunset')"></div>
+            </div>
         </header>
 
         <div class="games-grid">
-            <!-- Игра 1: Понг -->
-            <div class="game-card" data-game="pong">
-                <div class="game-icon">🏓</div>
-                <h3 class="game-title">Doodle Pong</h3>
-                <p class="game-desc">Классический понг с весёлой физикой</p>
+            <!-- Игра 1 -->
+            <div class="game-card" onclick="launchGame('snake')">
+                <img src="https://via.placeholder.com/300x150?text=Змейка" alt="Змейка" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Змейка</h3>
+                    <p class="game-description">Классическая аркадная игра</p>
+                </div>
             </div>
 
-            <!-- Игра 2: Змейка -->
-            <div class="game-card" data-game="snake">
-                <div class="game-icon">🐍</div>
-                <h3 class="game-title">Голодная Змейка</h3>
-                <p class="game-desc">Собери фрукты и не врежься в хвост!</p>
+            <!-- Игра 2 -->
+            <div class="game-card" onclick="launchGame('tetris')">
+                <img src="https://via.placeholder.com/300x150?text=Тетрис" alt="Тетрис" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Тетрис</h3>
+                    <p class="game-description">Собирайте линии из падающих фигур</p>
+                </div>
             </div>
 
-            <!-- Игра 3: Платформер -->
-            <div class="game-card" data-game="platformer">
-                <div class="game-icon">👾</div>
-                <h3 class="game-title">Прыг-Скок</h3>
-                <p class="game-desc">Прыгай по платформам и собирай звёзды</p>
+            <!-- Игра 3 -->
+            <div class="game-card" onclick="launchGame('tic-tac-toe')">
+                <img src="https://via.placeholder.com/300x150?text=Крестики-нолики" alt="Крестики-нолики" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Крестики-нолики</h3>
+                    <p class="game-description">Классическая игра для двух игроков</p>
+                </div>
             </div>
 
-            <!-- Игра 4: Тетрис -->
-            <div class="game-card" data-game="tetris">
-                <div class="game-icon">🧊</div>
-                <h3 class="game-title">Блоковый Тетрис</h3>
-                <p class="game-desc">Классика в карандашном стиле</p>
+            <!-- Игра 4 -->
+            <div class="game-card" onclick="launchGame('memory')">
+                <img src="https://via.placeholder.com/300x150?text=Память" alt="Игра на память" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Игра на память</h3>
+                    <p class="game-description">Найдите все пары карточек</p>
+                </div>
             </div>
 
-            <!-- Игра 5: Арканоид -->
-            <div class="game-card" data-game="arkanoid">
-                <div class="game-icon">🎯</div>
-                <h3 class="game-title">Разбей Кирпичи</h3>
-                <p class="game-desc">Разрушай блоки мячиком</p>
+            <!-- Игра 5 -->
+            <div class="game-card" onclick="launchGame('pong')">
+                <img src="https://via.placeholder.com/300x150?text=Пинг-понг" alt="Пинг-понг" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Пинг-понг</h3>
+                    <p class="game-description">Классическая аркада с ракетками</p>
+                </div>
+            </div>
+
+            <!-- Игра 6 -->
+            <div class="game-card" onclick="launchGame('hangman')">
+                <img src="https://via.placeholder.com/300x150?text=Виселица" alt="Виселица" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Виселица</h3>
+                    <p class="game-description">Угадайте слово по буквам</p>
+                </div>
+            </div>
+
+            <!-- Игра 7 -->
+            <div class="game-card" onclick="launchGame('breakout')">
+                <img src="https://via.placeholder.com/300x150?text=Арканоид" alt="Арканоид" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Арканоид</h3>
+                    <p class="game-description">Разбейте все кирпичи мячиком</p>
+                </div>
+            </div>
+
+            <!-- Игра 8 -->
+            <div class="game-card" onclick="launchGame('dino')">
+                <img src="https://via.placeholder.com/300x150?text=Dino+Game" alt="Dino Game" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Dino Game</h3>
+                    <p class="game-description">Бегите и прыгайте через кактусы</p>
+                </div>
+            </div>
+
+            <!-- Игра 9 -->
+            <div class="game-card" onclick="launchGame('minesweeper')">
+                <img src="https://via.placeholder.com/300x150?text=Сапер" alt="Сапер" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Сапер</h3>
+                    <p class="game-description">Найдите все мины, не подорвавшись</p>
+                </div>
+            </div>
+
+            <!-- Игра 10 -->
+            <div class="game-card" onclick="launchGame('flappy')">
+                <img src="https://via.placeholder.com/300x150?text=Flappy+Bird" alt="Flappy Bird" class="game-image">
+                <div class="game-info">
+                    <h3 class="game-title">Flappy Bird</h3>
+                    <p class="game-description">Пролетите между трубами</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Оверлей для игр -->
-    <div class="game-overlay" id="gameOverlay">
-        <div class="game-container" id="gameContainer">
-            <div class="close-btn" id="closeBtn">✕</div>
-            <div id="gameContent"></div>
+    <!-- Модальное окно для игр -->
+    <div class="game-modal" id="game-modal">
+        <div class="game-content">
+            <button class="close-btn" onclick="closeGame()">×</button>
+            <h2 id="game-title">Название игры</h2>
+            <div id="game-container"></div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Элементы
-            const themeBtn = document.getElementById('themeBtn');
-            const gameCards = document.querySelectorAll('.game-card');
-            const gameOverlay = document.getElementById('gameOverlay');
-            const gameContent = document.getElementById('gameContent');
-            const closeBtn = document.getElementById('closeBtn');
+        // Управление темами
+        function changeTheme(themeName) {
+            document.body.className = themeName;
+        }
 
-            // Текущая тема
-            let currentTheme = 'default';
-            const themes = ['default', 'dark', 'green', 'pink'];
+        // Управление играми
+        let currentGame = null;
 
-            // Переключение темы
-            themeBtn.addEventListener('click', () => {
-                const currentIndex = themes.indexOf(currentTheme);
-                const nextIndex = (currentIndex + 1) % themes.length;
-                currentTheme = themes[nextIndex];
-                document.body.className = `${currentTheme}-theme`;
-            });
+        function launchGame(gameName) {
+            const modal = document.getElementById('game-modal');
+            const gameTitle = document.getElementById('game-title');
+            const gameContainer = document.getElementById('game-container');
+            
+            gameTitle.textContent = getGameTitle(gameName);
+            gameContainer.innerHTML = '';
+            
+            // Останавливаем текущую игру, если она есть
+            if (currentGame && currentGame.stop) {
+                currentGame.stop();
+            }
+            
+            // Загружаем новую игру
+            currentGame = loadGame(gameName, gameContainer);
+            
+            modal.style.display = 'flex';
+        }
 
-            // Запуск игры
-            gameCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const game = card.dataset.game;
-                    loadGame(game);
+        function closeGame() {
+            document.getElementById('game-modal').style.display = 'none';
+            if (currentGame && currentGame.stop) {
+                currentGame.stop();
+            }
+        }
+
+        function getGameTitle(gameName) {
+            const titles = {
+                'snake': 'Змейка',
+                'tetris': 'Тетрис',
+                'tic-tac-toe': 'Крестики-нолики',
+                'memory': 'Игра на память',
+                'pong': 'Пинг-понг',
+                'hangman': 'Виселица',
+                'breakout': 'Арканоид',
+                'dino': 'Dino Game',
+                'minesweeper': 'Сапер',
+                'flappy': 'Flappy Bird'
+            };
+            return titles[gameName] || gameName;
+        }
+
+        function loadGame(gameName, container) {
+            switch(gameName) {
+                case 'snake':
+                    return loadSnakeGame(container);
+                case 'tetris':
+                    return loadTetrisGame(container);
+                case 'tic-tac-toe':
+                    return loadTicTacToeGame(container);
+                case 'memory':
+                    return loadMemoryGame(container);
+                case 'pong':
+                    return loadPongGame(container);
+                case 'hangman':
+                    return loadHangmanGame(container);
+                case 'breakout':
+                    return loadBreakoutGame(container);
+                case 'dino':
+                    return loadDinoGame(container);
+                case 'minesweeper':
+                    return loadMinesweeperGame(container);
+                case 'flappy':
+                    return loadFlappyGame(container);
+                default:
+                    container.innerHTML = '<p>Игра не найдена</p>';
+                    return null;
+            }
+        }
+
+        // Реализации игр
+
+        function loadSnakeGame(container) {
+            container.innerHTML = `
+                <canvas id="snake-canvas" width="400" height="400"></canvas>
+                <p>Управление: стрелки клавиатуры</p>
+            `;
+            
+            const canvas = document.getElementById('snake-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const gridSize = 20;
+            const tileCount = canvas.width / gridSize;
+            
+            let snake = [{x: 10, y: 10}];
+            let food = {x: 5, y: 5};
+            let xVelocity = 0;
+            let yVelocity = 0;
+            let score = 0;
+            let gameSpeed = 100;
+            let gameLoop;
+            
+            function drawGame() {
+                // Очистка холста
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Рисуем змею
+                ctx.fillStyle = 'green';
+                snake.forEach(part => {
+                    ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize-2, gridSize-2);
                 });
-            });
-
-            // Закрытие игры
-            closeBtn.addEventListener('click', () => {
-                gameOverlay.classList.remove('active');
-                gameContent.innerHTML = '';
-            });
-
-            // Загрузка игры
-            function loadGame(game) {
-                gameContent.innerHTML = '';
                 
-                // Создаем canvas для игры
-                const canvas = document.createElement('canvas');
-                canvas.width = 500;
-                canvas.height = 500;
-                canvas.style.border = '2px dashed var(--text-color)';
-                canvas.style.borderRadius = '10px';
-                canvas.style.maxWidth = '100%';
-                gameContent.appendChild(canvas);
+                // Рисуем еду
+                ctx.fillStyle = 'red';
+                ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize-2, gridSize-2);
                 
-                // Показываем оверлей
-                gameOverlay.classList.add('active');
-
-                // Загружаем выбранную игру
-                switch(game) {
-                    case 'pong':
-                        initPong(canvas);
-                        break;
-                    case 'snake':
-                        initSnake(canvas);
-                        break;
-                    case 'platformer':
-                        initPlatformer(canvas);
-                        break;
-                    case 'tetris':
-                        initTetris(canvas);
-                        break;
-                    case 'arkanoid':
-                        initArkanoid(canvas);
-                        break;
-                }
+                // Рисуем счет
+                ctx.fillStyle = 'black';
+                ctx.font = '20px Arial';
+                ctx.fillText('Счет: ' + score, 10, 20);
             }
-
-            // ===== ИГРА 1: ПОНГ =====
-            function initPong(canvas) {
-                const ctx = canvas.getContext('2d');
-                canvas.width = 500;
-                canvas.height = 300;
+            
+            function moveSnake() {
+                const head = {x: snake[0].x + xVelocity, y: snake[0].y + yVelocity};
                 
-                // Игровые объекты
-                const ball = {
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    radius: 10,
-                    dx: 5,
-                    dy: 5
-                };
-                
-                const paddleHeight = 80;
-                const paddleWidth = 10;
-                
-                const player = {
-                    x: 10,
-                    y: canvas.height / 2 - paddleHeight / 2,
-                    width: paddleWidth,
-                    height: paddleHeight,
-                    dy: 0,
-                    speed: 8
-                };
-                
-                const computer = {
-                    x: canvas.width - paddleWidth - 10,
-                    y: canvas.height / 2 - paddleHeight / 2,
-                    width: paddleWidth,
-                    height: paddleHeight,
-                    dy: 4
-                };
-                
-                let playerScore = 0;
-                let computerScore = 0;
-                
-                // Обработчики событий
-                document.addEventListener('keydown', keyDown);
-                document.addEventListener('keyup', keyUp);
-                
-                function keyDown(e) {
-                    if (e.key === 'ArrowUp') player.dy = -player.speed;
-                    if (e.key === 'ArrowDown') player.dy = player.speed;
+                // Проверка на столкновение с границами
+                if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                    gameOver();
+                    return;
                 }
                 
-                function keyUp(e) {
-                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') player.dy = 0;
-                }
-                
-                // Игровой цикл
-                function gameLoop() {
-                    // Очистка canvas
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Рисуем разделительную линию
-                    ctx.beginPath();
-                    ctx.setLineDash([5, 5]);
-                    ctx.moveTo(canvas.width / 2, 0);
-                    ctx.lineTo(canvas.width / 2, canvas.height);
-                    ctx.strokeStyle = 'var(--text-color)';
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                    
-                    // Рисуем мяч
-                    ctx.beginPath();
-                    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = 'var(--main-color)';
-                    ctx.fill();
-                    ctx.closePath();
-                    
-                    // Рисуем ракетки
-                    ctx.fillStyle = 'var(--text-color)';
-                    ctx.fillRect(player.x, player.y, player.width, player.height);
-                    ctx.fillRect(computer.x, computer.y, computer.width, computer.height);
-                    
-                    // Рисуем счёт
-                    ctx.font = '30px "Comic Sans MS", cursive';
-                    ctx.fillText(playerScore, canvas.width / 4, 50);
-                    ctx.fillText(computerScore, 3 * canvas.width / 4, 50);
-                    
-                    // Движение мяча
-                    ball.x += ball.dx;
-                    ball.y += ball.dy;
-                    
-                    // Отскок от стен
-                    if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-                        ball.dy = -ball.dy;
-                    }
-                    
-                    // Отскок от ракеток
-                    if (
-                        ball.x - ball.radius < player.x + player.width &&
-                        ball.y > player.y &&
-                        ball.y < player.y + player.height
-                    ) {
-                        ball.dx = -ball.dx * 1.05; // Увеличиваем скорость
-                    }
-                    
-                    if (
-                        ball.x + ball.radius > computer.x &&
-                        ball.y > computer.y &&
-                        ball.y < computer.y + computer.height
-                    ) {
-                        ball.dx = -ball.dx * 1.05;
-                    }
-                    
-                    // Забитие гола
-                    if (ball.x - ball.radius < 0) {
-                        computerScore++;
-                        resetBall();
-                    }
-                    
-                    if (ball.x + ball.radius > canvas.width) {
-                        playerScore++;
-                        resetBall();
-                    }
-                    
-                    // Движение ракеток
-                    player.y += player.dy;
-                    
-                    // Компьютерная ракетка
-                    if (computer.y + computer.height / 2 < ball.y) {
-                        computer.y += computer.dy;
-                    } else {
-                        computer.y -= computer.dy;
-                    }
-                    
-                    // Ограничение ракеток
-                    if (player.y < 0) player.y = 0;
-                    if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
-                    
-                    if (computer.y < 0) computer.y = 0;
-                    if (computer.y + computer.height > canvas.height) computer.y = canvas.height - computer.height;
-                    
-                    requestAnimationFrame(gameLoop);
-                }
-                
-                function resetBall() {
-                    ball.x = canvas.width / 2;
-                    ball.y = canvas.height / 2;
-                    ball.dx = -ball.dx;
-                    ball.dy = Math.random() * 8 - 4;
-                }
-                
-                gameLoop();
-            }
-
-            // ===== ИГРА 2: ЗМЕЙКА =====
-            function initSnake(canvas) {
-                const ctx = canvas.getContext('2d');
-                const box = 20;
-                canvas.width = 400;
-                canvas.height = 400;
-                
-                let snake = [{x: 9 * box, y: 10 * box}];
-                let direction = null;
-                let food = {
-                    x: Math.floor(Math.random() * 20) * box,
-                    y: Math.floor(Math.random() * 20) * box
-                };
-                
-                let score = 0;
-                let game;
-                
-                // Управление
-                document.addEventListener('keydown', changeDirection);
-                
-                function changeDirection(e) {
-                    if (e.key === 'ArrowLeft' && direction !== 'RIGHT') direction = 'LEFT';
-                    if (e.key === 'ArrowUp' && direction !== 'DOWN') direction = 'UP';
-                    if (e.key === 'ArrowRight' && direction !== 'LEFT') direction = 'RIGHT';
-                    if (e.key === 'ArrowDown' && direction !== 'UP') direction = 'DOWN';
-                }
-                
-                // Проверка столкновений
-                function collision(head, array) {
-                    for (let i = 0; i < array.length; i++) {
-                        if (head.x === array[i].x && head.y === array[i].y) return true;
-                    }
-                    return false;
-                }
-                
-                // Основная функция
-                function draw() {
-                    // Рисуем змейку
-                    for (let i = 0; i < snake.length; i++) {
-                        ctx.fillStyle = i === 0 ? 'var(--main-color)' : 'var(--text-color)';
-                        ctx.fillRect(snake[i].x, snake[i].y, box, box);
-                        
-                        ctx.strokeStyle = 'var(--bg-color)';
-                        ctx.strokeRect(snake[i].x, snake[i].y, box, box);
-                    }
-                    
-                    // Рисуем еду
-                    ctx.fillStyle = '#FF5252';
-                    ctx.fillRect(food.x, food.y, box, box);
-                    
-                    // Позиция головы
-                    let snakeX = snake[0].x;
-                    let snakeY = snake[0].y;
-                    
-                    // Направление
-                    if (direction === 'LEFT') snakeX -= box;
-                    if (direction === 'UP') snakeY -= box;
-                    if (direction === 'RIGHT') snakeX += box;
-                    if (direction === 'DOWN') snakeY += box;
-                    
-                    // Если съела еду
-                    if (snakeX === food.x && snakeY === food.y) {
-                        score++;
-                        food = {
-                            x: Math.floor(Math.random() * 20) * box,
-                            y: Math.floor(Math.random() * 20) * box
-                        };
-                    } else {
-                        snake.pop();
-                    }
-                    
-                    // Новая голова
-                    let newHead = {x: snakeX, y: snakeY};
-                    
-                    // Конец игры
-                    if (
-                        snakeX < 0 || snakeY < 0 ||
-                        snakeX >= canvas.width || snakeY >= canvas.height ||
-                        collision(newHead, snake)
-                    ) {
-                        clearInterval(game);
-                        ctx.font = '40px "Comic Sans MS", cursive';
-                        ctx.fillStyle = 'var(--main-color)';
-                        ctx.fillText('Конец игры!', 100, 200);
+                // Проверка на столкновение с собой
+                for (let i = 1; i < snake.length; i++) {
+                    if (head.x === snake[i].x && head.y === snake[i].y) {
+                        gameOver();
                         return;
                     }
-                    
-                    snake.unshift(newHead);
-                    
-                    // Счёт
-                    ctx.font = '20px "Comic Sans MS", cursive';
-                    ctx.fillStyle = 'var(--text-color)';
-                    ctx.fillText(`Счёт: ${score}`, 10, 20);
                 }
                 
-                game = setInterval(draw, 100);
-            }
-
-            // ===== ИГРА 3: ПЛАТФОРМЕР =====
-            function initPlatformer(canvas) {
-                const ctx = canvas.getContext('2d');
-                canvas.width = 500;
-                canvas.height = 300;
+                snake.unshift(head);
                 
-                // Игрок
-                const player = {
-                    x: 50,
-                    y: 200,
-                    width: 30,
-                    height: 30,
-                    speed: 5,
-                    dx: 0,
-                    dy: 0,
-                    jumping: false
+                // Проверка на съедение еды
+                if (head.x === food.x && head.y === food.y) {
+                    score++;
+                    placeFood();
+                    
+                    // Увеличиваем скорость каждые 5 очков
+                    if (score % 5 === 0 && gameSpeed > 50) {
+                        gameSpeed -= 10;
+                        clearInterval(gameLoop);
+                        gameLoop = setInterval(gameStep, gameSpeed);
+                    }
+                } else {
+                    snake.pop();
+                }
+            }
+            
+            function placeFood() {
+                food = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount)
                 };
                 
-                // Платформы
-                const platforms = [
-                    {x: 0, y: 250, width: 150, height: 20},
-                    {x: 200, y: 200, width: 150, height: 20},
-                    {x: 400, y: 150, width: 150, height: 20}
-                ];
-                
-                // Звёзды
-                const stars = [
-                    {x: 100, y: 220, collected: false},
-                    {x: 250, y: 170, collected: false},
-                    {x: 450, y: 120, collected: false}
-                ];
-                
-                let score = 0;
-                let gravity = 1;
-                
-                // Управление
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'ArrowLeft') player.dx = -player.speed;
-                    if (e.key === 'ArrowRight') player.dx = player.speed;
-                    if (e.key === 'ArrowUp' && !player.jumping) {
-                        player.dy = -15;
-                        player.jumping = true;
-                    }
-                });
-                
-                document.addEventListener('keyup', (e) => {
-                    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') player.dx = 0;
-                });
-                
-                // Проверка столкновений
-                function checkCollision(player, platform) {
-                    return (
-                        player.x < platform.x + platform.width &&
-                        player.x + player.width > platform.x &&
-                        player.y < platform.y + platform.height &&
-                        player.y + player.height > platform.y
-                    );
-                }
-                
-                // Игровой цикл
-                function gameLoop() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Рисуем игрока
-                    ctx.fillStyle = 'var(--main-color)';
-                    ctx.fillRect(player.x, player.y, player.width, player.height);
-                    
-                    // Рисуем платформы
-                    ctx.fillStyle = 'var(--text-color)';
-                    platforms.forEach(platform => {
-                        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-                    });
-                    
-                    // Рисуем звёзды
-                    stars.forEach(star => {
-                        if (!star.collected) {
-                            ctx.fillStyle = '#FFD700';
-                            ctx.beginPath();
-                            ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
-                            ctx.fill();
-                        }
-                    });
-                    
-                    // Движение игрока
-                    player.x += player.dx;
-                    player.y += player.dy;
-                    
-                    // Гравитация
-                    player.dy += gravity;
-                    
-                    // Проверка платформ
-                    let onPlatform = false;
-                    platforms.forEach(platform => {
-                        if (
-                            player.y + player.height <= platform.y + 10 &&
-                            player.y + player.height + player.dy > platform.y &&
-                            player.x + player.width > platform.x &&
-                            player.x < platform.x + platform.width
-                        ) {
-                            player.y = platform.y - player.height;
-                            player.dy = 0;
-                            player.jumping = false;
-                            onPlatform = true;
-                        }
-                    });
-                    
-                    // Если не на платформе
-                    if (!onPlatform && player.y + player.height < canvas.height) {
-                        player.jumping = true;
-                    }
-                    
-                    // Сбор звёзд
-                    stars.forEach(star => {
-                        if (
-                            !star.collected &&
-                            player.x + player.width > star.x - 8 &&
-                            player.x < star.x + 8 &&
-                            player.y + player.height > star.y - 8 &&
-                            player.y < star.y + 8
-                        ) {
-                            star.collected = true;
-                            score++;
-                        }
-                    });
-                    
-                    // Границы экрана
-                    if (player.x < 0) player.x = 0;
-                    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-                    
-                    if (player.y + player.height > canvas.height) {
-                        player.y = canvas.height - player.height;
-                        player.dy = 0;
-                        player.jumping = false;
-                    }
-                    
-                    // Счёт
-                    ctx.font = '20px "Comic Sans MS", cursive';
-                    ctx.fillStyle = 'var(--text-color)';
-                    ctx.fillText(`Звёзды: ${score}`, 10, 20);
-                    
-                    // Победа
-                    if (score === stars.length) {
-                        ctx.font = '30px "Comic Sans MS", cursive';
-                        ctx.fillStyle = 'var(--main-color)';
-                        ctx.fillText('Победа!', 200, 150);
+                // Проверяем, чтобы еда не появилась на змее
+                for (let i = 0; i < snake.length; i++) {
+                    if (food.x === snake[i].x && food.y === snake[i].y) {
+                        placeFood();
                         return;
                     }
-                    
-                    requestAnimationFrame(gameLoop);
                 }
-                
-                gameLoop();
             }
+            
+            function gameStep() {
+                moveSnake();
+                drawGame();
+            }
+            
+            function gameOver() {
+                clearInterval(gameLoop);
+                alert('Игра окончена! Ваш счет: ' + score);
+            }
+            
+            // Управление
+            document.addEventListener('keydown', function(e) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        if (yVelocity !== 1) {
+                            xVelocity = 0;
+                            yVelocity = -1;
+                        }
+                        break;
+                    case 'ArrowDown':
+                        if (yVelocity !== -1) {
+                            xVelocity = 0;
+                            yVelocity = 1;
+                        }
+                        break;
+                    case 'ArrowLeft':
+                        if (xVelocity !== 1) {
+                            xVelocity = -1;
+                            yVelocity = 0;
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (xVelocity !== -1) {
+                            xVelocity = 1;
+                            yVelocity = 0;
+                        }
+                        break;
+                }
+            });
+            
+            placeFood();
+            gameLoop = setInterval(gameStep, gameSpeed);
+            
+            return {
+                stop: function() {
+                    clearInterval(gameLoop);
+                }
+            };
+        }
 
-            // ===== ИГРА 4: ТЕТРИС =====
-            function initTetris(canvas) {
-                const ctx = canvas.getContext('2d');
-                const blockSize = 25;
-                canvas.width = 10 * blockSize;
-                canvas.height = 20 * blockSize;
+        function loadTetrisGame(container) {
+            container.innerHTML = `
+                <canvas id="tetris-canvas" width="300" height="600"></canvas>
+                <p>Управление: стрелки (влево/вправо - движение, вверх - поворот, вниз - ускорение)</p>
+            `;
+            
+            const canvas = document.getElementById('tetris-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const blockSize = 30;
+            const cols = canvas.width / blockSize;
+            const rows = canvas.height / blockSize;
+            
+            let score = 0;
+            let gameOver = false;
+            let board = createBoard();
+            let piece = null;
+            let dropCounter = 0;
+            let dropInterval = 1000;
+            let lastTime = 0;
+            let animationId;
+            
+            // Фигуры тетриса
+            const pieces = [
+                { shape: [[1, 1, 1, 1]], color: '#00FFFF' }, // I
+                { shape: [[1, 1, 1], [0, 1, 0]], color: '#800080' }, // T
+                { shape: [[1, 1, 1], [1, 0, 0]], color: '#FF7F00' }, // L
+                { shape: [[1, 1, 1], [0, 0, 1]], color: '#0000FF' }, // J
+                { shape: [[1, 1], [1, 1]], color: '#FFFF00' }, // O
+                { shape: [[0, 1, 1], [1, 1, 0]], color: '#00FF00' }, // S
+                { shape: [[1, 1, 0], [0, 1, 1]], color: '#FF0000' } // Z
+            ];
+            
+            function createBoard() {
+                return Array.from(Array(rows), () => Array(cols).fill(0));
+            }
+            
+            function draw() {
+                // Очистка холста
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Игровое поле
-                const rows = 20;
-                const cols = 10;
-                let grid = Array(rows).fill().map(() => Array(cols).fill(0));
-                
-                // Фигуры
-                const shapes = [
-                    [[1,1,1,1]], // I
-                    [[1,1],[1,1]], // O
-                    [[1,1,1],[0,1,0]], // T
-                    [[1,1,1],[1,0,0]], // L
-                    [[1,1,1],[0,0,1]], // J
-                    [[0,1,1],[1,1,0]], // S
-                    [[1,1,0],[0,1,1]]  // Z
-                ];
-                
-                const colors = [
-                    '#FF5252', '#FFD166', '#06D6A0', '#118AB2', '#073B4C', '#7209B7', '#F72585'
-                ];
-                
-                let currentPiece = null;
-                let nextPiece = null;
-                let currentX = 0;
-                let currentY = 0;
-                let score = 0;
-                let gameOver = false;
-                let dropInterval = 1000;
-                let lastTime = 0;
-                
-                // Создание новой фигуры
-                function newPiece() {
-                    if (!nextPiece) {
-                        nextPiece = {
-                            shape: shapes[Math.floor(Math.random() * shapes.length)],
-                            color: colors[Math.floor(Math.random() * colors.length)]
-                        };
-                    }
-                    
-                    currentPiece = nextPiece;
-                    nextPiece = {
-                        shape: shapes[Math.floor(Math.random() * shapes.length)],
-                        color: colors[Math.floor(Math.random() * colors.length)]
-                    };
-                    
-                    currentX = Math.floor(cols / 2) - Math.floor(currentPiece.shape[0].length / 2);
-                    currentY = 0;
-                    
-                    // Проверка на проигрыш
-                    if (collision()) {
-                        gameOver = true;
-                    }
-                }
-                
-                // Проверка столкновений
-                function collision() {
-                    for (let y = 0; y < currentPiece.shape.length; y++) {
-                        for (let x = 0; x < currentPiece.shape[y].length; x++) {
-                            if (
-                                currentPiece.shape[y][x] !== 0 &&
-                                (currentY + y >= rows ||
-                                 currentX + x < 0 ||
-                                 currentX + x >= cols ||
-                                 grid[currentY + y][currentX + x] !== 0)
-                            ) {
-                                return true;
-                            }
+                // Рисуем доску
+                board.forEach((row, y) => {
+                    row.forEach((value, x) => {
+                        if (value) {
+                            ctx.fillStyle = value;
+                            ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
+                            ctx.strokeStyle = '#000';
+                            ctx.strokeRect(x * blockSize, y * blockSize, blockSize, blockSize);
                         }
-                    }
-                    return false;
-                }
-                
-                // Фиксация фигуры
-                function lockPiece() {
-                    for (let y = 0; y < currentPiece.shape.length; y++) {
-                        for (let x = 0; x < currentPiece.shape[y].length; x++) {
-                            if (currentPiece.shape[y][x] !== 0) {
-                                grid[currentY + y][currentX + x] = currentPiece.color;
-                            }
-                        }
-                    }
-                    
-                    // Проверка линий
-                    clearLines();
-                    
-                    // Новая фигура
-                    newPiece();
-                }
-                
-                // Очистка заполненных линий
-                function clearLines() {
-                    let linesCleared = 0;
-                    
-                    for (let y = rows - 1; y >= 0; y--) {
-                        if (grid[y].every(cell => cell !== 0)) {
-                            grid.splice(y, 1);
-                            grid.unshift(Array(cols).fill(0));
-                            linesCleared++;
-                            y++; // Проверить эту же позицию снова
-                        }
-                    }
-                    
-                    // Увеличение счёта
-                    if (linesCleared > 0) {
-                        score += linesCleared * 100;
-                        dropInterval = Math.max(100, dropInterval - 50);
-                    }
-                }
-                
-                // Управление
-                document.addEventListener('keydown', (e) => {
-                    if (gameOver) return;
-                    
-                    switch(e.key) {
-                        case 'ArrowLeft':
-                            currentX--;
-                            if (collision()) currentX++;
-                            break;
-                        case 'ArrowRight':
-                            currentX++;
-                            if (collision()) currentX--;
-                            break;
-                        case 'ArrowDown':
-                            currentY++;
-                            if (collision()) {
-                                currentY--;
-                                lockPiece();
-                            }
-                            break;
-                        case 'ArrowUp':
-                            rotatePiece();
-                            break;
-                    }
+                    });
                 });
                 
-                // Поворот фигуры
-                function rotatePiece() {
-                    const originalShape = currentPiece.shape;
-                    const rows = currentPiece.shape.length;
-                    const cols = currentPiece.shape[0].length;
-                    
-                    // Транспонирование матрицы
-                    let newShape = Array(cols).fill().map(() => Array(rows).fill(0));
-                    for (let y = 0; y < rows; y++) {
-                        for (let x = 0; x < cols; x++) {
-                            newShape[x][rows - 1 - y] = currentPiece.shape[y][x];
-                        }
-                    }
-                    
-                    currentPiece.shape = newShape;
-                    if (collision()) {
-                        currentPiece.shape = originalShape;
-                    }
-                }
-                
-                // Отрисовка
-                function draw() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Рисуем сетку
-                    for (let y = 0; y < rows; y++) {
-                        for (let x = 0; x < cols; x++) {
-                            if (grid[y][x] !== 0) {
-                                ctx.fillStyle = grid[y][x];
-                                ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
-                                ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-                                ctx.strokeRect(x * blockSize, y * blockSize, blockSize, blockSize);
-                            }
-                        }
-                    }
-                    
-                    // Рисуем текущую фигуру
-                    if (currentPiece) {
-                        for (let y = 0; y < currentPiece.shape.length; y++) {
-                            for (let x = 0; x < currentPiece.shape[y].length; x++) {
-                                if (currentPiece.shape[y][x] !== 0) {
-                                    ctx.fillStyle = currentPiece.color;
-                                    ctx.fillRect(
-                                        (currentX + x) * blockSize,
-                                        (currentY + y) * blockSize,
-                                        blockSize,
-                                        blockSize
-                                    );
-                                    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-                                    ctx.strokeRect(
-                                        (currentX + x) * blockSize,
-                                        (currentY + y) * blockSize,
-                                        blockSize,
-                                        blockSize
-                                    );
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Счёт
-                    ctx.font = '20px "Comic Sans MS", cursive';
-                    ctx.fillStyle = 'var(--text-color)';
-                    ctx.fillText(`Счёт: ${score}`, 10, 20);
-                    
-                    // Конец игры
-                    if (gameOver) {
-                        ctx.font = '30px "Comic Sans MS", cursive';
-                        ctx.fillStyle = 'var(--main-color)';
-                        ctx.fillText('Конец игры!', 100, canvas.height / 2);
-                    }
-                }
-                
-                // Игровой цикл
-                function update(time = 0) {
-                    if (gameOver) return;
-                    
-                    const deltaTime = time - lastTime;
-                    
-                    if (deltaTime > dropInterval) {
-                        currentY++;
-                        if (collision()) {
-                            currentY--;
-                            lockPiece();
-                        }
-                        lastTime = time;
-                    }
-                    
-                    draw();
-                    requestAnimationFrame(update);
-                }
-                
-                // Начало игры
-                newPiece();
-                update();
-            }
-
-            // ===== ИГРА 5: АРКАНОИД =====
-            function initArkanoid(canvas) {
-                const ctx = canvas.getContext('2d');
-                canvas.width = 500;
-                canvas.height = 400;
-                
-                // Платформа
-                const paddle = {
-                    x: canvas.width / 2 - 50,
-                    y: canvas.height - 20,
-                    width: 100,
-                    height: 15,
-                    speed: 8,
-                    dx: 0
-                };
-                
-                // Мяч
-                const ball = {
-                    x: canvas.width / 2,
-                    y: canvas.height - 30,
-                    radius: 10,
-                    speed: 4,
-                    dx: 3,
-                    dy: -3
-                };
-                
-                // Кирпичи
-                const brickRowCount = 5;
-                const brickColumnCount = 8;
-                const brickWidth = 55;
-                const brickHeight = 20;
-                const brickPadding = 10;
-                const brickOffsetTop = 60;
-                const brickOffsetLeft = 30;
-                
-                const bricks = [];
-                for (let r = 0; r < brickRowCount; r++) {
-                    bricks[r] = [];
-                    for (let c = 0; c < brickColumnCount; c++) {
-                        bricks[r][c] = {
-                            x: c * (brickWidth + brickPadding) + brickOffsetLeft,
-                            y: r * (brickHeight + brickPadding) + brickOffsetTop,
-                            width: brickWidth,
-                            height: brickHeight,
-                            color: `hsl(${Math.random() * 360}, 70%, 50%)`,
-                            visible: true
-                        };
-                    }
-                }
-                
-                let score = 0;
-                let lives = 3;
-                
-                // Управление
-                document.addEventListener('keydown', keyDown);
-                document.addEventListener('keyup', keyUp);
-                
-                function keyDown(e) {
-                    if (e.key === 'ArrowLeft') paddle.dx = -paddle.speed;
-                    if (e.key === 'ArrowRight') paddle.dx = paddle.speed;
-                }
-                
-                function keyUp(e) {
-                    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') paddle.dx = 0;
-                }
-                
-                // Проверка столкновений
-                function collisionDetection() {
-                    for (let r = 0; r < brickRowCount; r++) {
-                        for (let c = 0; c < brickColumnCount; c++) {
-                            const brick = bricks[r][c];
-                            if (brick.visible) {
-                                if (
-                                    ball.x > brick.x &&
-                                    ball.x < brick.x + brick.width &&
-                                    ball.y > brick.y &&
-                                    ball.y < brick.y + brick.height
-                                ) {
-                                    ball.dy = -ball.dy;
-                                    brick.visible = false;
-                                    score++;
-                                    
-                                    // Проверка победы
-                                    if (score === brickRowCount * brickColumnCount) {
-                                        alert('Победа!');
-                                        document.location.reload();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Движение мяча
-                function moveBall() {
-                    ball.x += ball.dx;
-                    ball.y += ball.dy;
-                    
-                    // Стены
-                    if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
-                        ball.dx = -ball.dx;
-                    }
-                    
-                    // Верхняя стена
-                    if (ball.y - ball.radius < 0) {
-                        ball.dy = -ball.dy;
-                    }
-                    
-                    // Платформа
-                    if (
-                        ball.y + ball.radius > paddle.y &&
-                        ball.y + ball.radius < paddle.y + paddle.height &&
-                        ball.x > paddle.x &&
-                        ball.x < paddle.x + paddle.width
-                    ) {
-                        ball.dy = -ball.dy;
-                        
-                        // Изменение направления в зависимости от места удара
-                        const hitPos = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
-                        ball.dx = hitPos * 5;
-                    }
-                    
-                    // Нижняя граница
-                    if (ball.y + ball.radius > canvas.height) {
-                        lives--;
-                        if (lives <= 0) {
-                            alert('Игра окончена!');
-                            document.location.reload();
-                        } else {
-                            resetBall();
-                        }
-                    }
-                }
-                
-                // Сброс мяча
-                function resetBall() {
-                    ball.x = canvas.width / 2;
-                    ball.y = canvas.height - 30;
-                    ball.dx = 3 * (Math.random() > 0.5 ? 1 : -1);
-                    ball.dy = -3;
-                    paddle.x = canvas.width / 2 - 50;
-                    paddle.dx = 0;
-                }
-                
-                // Отрисовка
-                function draw() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Рисуем кирпичи
-                    bricks.forEach(row => {
-                        row.forEach(brick => {
-                            if (brick.visible) {
-                                ctx.fillStyle = brick.color;
-                                ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
+                // Рисуем текущую фигуру
+                if (piece) {
+                    piece.shape.forEach((row, y) => {
+                        row.forEach((value, x) => {
+                            if (value) {
+                                ctx.fillStyle = piece.color;
+                                ctx.fillRect(
+                                    (piece.position.x + x) * blockSize,
+                                    (piece.position.y + y) * blockSize,
+                                    blockSize,
+                                    blockSize
+                                );
                                 ctx.strokeStyle = '#000';
-                                ctx.strokeRect(brick.x, brick.y, brick.width, brick.height);
+                                ctx.strokeRect(
+                                    (piece.position.x + x) * blockSize,
+                                    (piece.position.y + y) * blockSize,
+                                    blockSize,
+                                    blockSize
+                                );
                             }
                         });
                     });
-                    
-                    // Рисуем платформу
-                    ctx.fillStyle = 'var(--text-color)';
-                    ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-                    
-                    // Рисуем мяч
-                    ctx.fillStyle = 'var(--main-color)';
-                    ctx.beginPath();
-                    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Счёт и жизни
-                    ctx.font = '20px "Comic Sans MS", cursive';
-                    ctx.fillStyle = 'var(--text-color)';
-                    ctx.fillText(`Счёт: ${score}`, 10, 20);
-                    ctx.fillText(`Жизни: ${lives}`, canvas.width - 100, 20);
                 }
                 
-                // Обновление игры
-                function update() {
-                    // Движение платформы
-                    paddle.x += paddle.dx;
-                    
-                    // Ограничение платформы
-                    if (paddle.x < 0) paddle.x = 0;
-                    if (paddle.x + paddle.width > canvas.width) paddle.x = canvas.width - paddle.width;
-                    
-                    // Движение мяча
-                    moveBall();
-                    
-                    // Проверка столкновений
-                    collisionDetection();
-                    
-                    // Отрисовка
-                    draw();
-                    
-                    requestAnimationFrame(update);
-                }
-                
-                update();
+                // Рисуем счет
+                ctx.fillStyle = '#FFF';
+                ctx.font = '20px Arial';
+                ctx.fillText('Счет: ' + score, 10, 20);
             }
-        });
+            
+            function createPiece() {
+                const randomIndex = Math.floor(Math.random() * pieces.length);
+                const newPiece = {
+                    shape: pieces[randomIndex].shape,
+                    color: pieces[randomIndex].color,
+                    position: { x: Math.floor(cols / 2) - 1, y: 0 }
+                };
+                
+                // Проверка на проигрыш
+                if (collide(newPiece)) {
+                    gameOver = true;
+                    alert('Игра окончена! Ваш счет: ' + score);
+                    return null;
+                }
+                
+                return newPiece;
+            }
+            
+            function collide(piece) {
+                for (let y = 0; y < piece.shape.length; y++) {
+                    for (let x = 0; x < piece.shape[y].length; x++) {
+                        if (piece.shape[y][x] !== 0 &&
+                            (board[y + piece.position.y] &&
+                            board[y + piece.position.y][x + piece.position.x]) !== 0) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            
+            function merge() {
+                piece.shape.forEach((row, y) => {
+                    row.forEach((value, x) => {
+                        if (value) {
+                            board[y + piece.position.y][x + piece.position.x] = piece.color;
+                        }
+                    });
+                });
+            }
+            
+            function rotate() {
+                const rotated = [];
+                for (let i = 0; i < piece.shape[0].length; i++) {
+                    const row = [];
+                    for (let j = piece.shape.length - 1; j >= 0; j--) {
+                        row.push(piece.shape[j][i]);
+                    }
+                    rotated.push(row);
+                }
+                
+                const originalShape = piece.shape;
+                piece.shape = rotated;
+                if (collide(piece)) {
+                    piece.shape = originalShape;
+                }
+            }
+            
+            function clearLines() {
+                let linesCleared = 0;
+                
+                outer: for (let y = rows - 1; y >= 0; y--) {
+                    for (let x = 0; x < cols; x++) {
+                        if (board[y][x] === 0) {
+                            continue outer;
+                        }
+                    }
+                    
+                    // Удаляем заполненную строку
+                    const row = board.splice(y, 1)[0].fill(0);
+                    board.unshift(row);
+                    y++; // Проверяем ту же строку снова
+                    
+                    linesCleared++;
+                }
+                
+                // Начисляем очки
+                if (linesCleared > 0) {
+                    score += linesCleared * 100;
+                    // Увеличиваем скорость каждые 5 линий
+                    if (score % 500 === 0 && dropInterval > 200) {
+                        dropInterval -= 100;
+                    }
+                }
+            }
+            
+            function update(time = 0) {
+                if (gameOver) {
+                    cancelAnimationFrame(animationId);
+                    return;
+                }
+                
+                const deltaTime = time - lastTime;
+                lastTime = time;
+                
+                dropCounter += deltaTime;
+                if (dropCounter > dropInterval) {
+                    moveDown();
+                    dropCounter = 0;
+                }
+                
+                draw();
+                animationId = requestAnimationFrame(update);
+            }
+            
+            function moveDown() {
+                if (!piece) return;
+                
+                piece.position.y++;
+                if (collide(piece)) {
+                    piece.position.y--;
+                    merge();
+                    clearLines();
+                    piece = createPiece();
+                }
+                dropCounter = 0;
+            }
+            
+            function moveLeft() {
+                if (!piece) return;
+                
+                piece.position.x--;
+                if (collide(piece)) {
+                    piece.position.x++;
+                }
+            }
+            
+            function moveRight() {
+                if (!piece) return;
+                
+                piece.position.x++;
+                if (collide(piece)) {
+                    piece.position.x--;
+                }
+            }
+            
+            // Управление
+            document.addEventListener('keydown', event => {
+                if (gameOver) return;
+                
+                switch(event.key) {
+                    case 'ArrowLeft':
+                        moveLeft();
+                        break;
+                    case 'ArrowRight':
+                        moveRight();
+                        break;
+                    case 'ArrowDown':
+                        moveDown();
+                        break;
+                    case 'ArrowUp':
+                        rotate();
+                        break;
+                }
+            });
+            
+            piece = createPiece();
+            update();
+            
+            return {
+                stop: function() {
+                    cancelAnimationFrame(animationId);
+                }
+            };
+        }
+
+        function loadTicTacToeGame(container) {
+            container.innerHTML = `
+                <div id="tic-tac-toe-board"></div>
+                <button onclick="resetTicTacToe()">Новая игра</button>
+                <p id="tic-tac-toe-status">Ход: X</p>
+            `;
+            
+            const board = document.getElementById('tic-tac-toe-board');
+            const status = document.getElementById('tic-tac-toe-status');
+            let currentPlayer = 'X';
+            let gameState = ['', '', '', '', '', '', '', '', ''];
+            let gameActive = true;
+            
+            const winningConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6]             // diagonals
+            ];
+            
+            function handleCellClick(e) {
+                const clickedCell = e.target;
+                const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+                
+                if (gameState[clickedCellIndex] !== '' || !gameActive) return;
+                
+                gameState[clickedCellIndex] = currentPlayer;
+                clickedCell.textContent = currentPlayer;
+                clickedCell.style.cursor = 'default';
+                
+                checkResult();
+            }
+            
+            function checkResult() {
+                let roundWon = false;
+                
+                for (let i = 0; i < winningConditions.length; i++) {
+                    const [a, b, c] = winningConditions[i];
+                    
+                    if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '') continue;
+                    
+                    if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+                        roundWon = true;
+                        break;
+                    }
+                }
+                
+                if (roundWon) {
+                    status.textContent = `Игрок ${currentPlayer} победил!`;
+                    gameActive = false;
+                    return;
+                }
+                
+                if (!gameState.includes('')) {
+                    status.textContent = 'Ничья!';
+                    gameActive = false;
+                    return;
+                }
+                
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                status.textContent = `Ход: ${currentPlayer}`;
+            }
+            
+            function resetGame() {
+                currentPlayer = 'X';
+                gameState = ['', '', '', '', '', '', '', '', ''];
+                gameActive = true;
+                status.textContent = `Ход: ${currentPlayer}`;
+                
+                document.querySelectorAll('.tic-tac-toe-cell').forEach(cell => {
+                    cell.textContent = '';
+                    cell.style.cursor = 'pointer';
+                });
+            }
+            
+            // Создаем игровое поле
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'tic-tac-toe-cell';
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+            
+            // Делаем функцию reset доступной глобально
+            window.resetTicTacToe = resetGame;
+            
+            return {
+                stop: function() {
+                    // Ничего не нужно делать для остановки этой игры
+                }
+            };
+        }
+
+        function loadMemoryGame(container) {
+            container.innerHTML = `
+                <div id="memory-game"></div>
+                <p id="memory-status">Найдите все пары карточек</p>
+            `;
+            
+            const gameContainer = document.getElementById('memory-game');
+            const status = document.getElementById('memory-status');
+            
+            const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+            const cards = [...emojis, ...emojis];
+            
+            let flippedCards = [];
+            let matchedCards = [];
+            let canFlip = true;
+            
+            // Перемешиваем карточки
+            cards.sort(() => 0.5 - Math.random());
+            
+            // Создаем игровое поле
+            cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.setAttribute('data-index', index);
+                card.textContent = emoji;
+                card.style.display = 'none';
+                card.addEventListener('click', flipCard);
+                gameContainer.appendChild(card);
+            });
+            
+            // Показываем карточки на 3 секунды в начале
+            showAllCards();
+            setTimeout(hideAllCards, 3000);
+            
+            function showAllCards() {
+                document.querySelectorAll('.memory-card').forEach(card => {
+                    card.style.display = 'flex';
+                });
+            }
+            
+            function hideAllCards() {
+                document.querySelectorAll('.memory-card:not(.matched)').forEach(card => {
+                    card.style.display = 'flex';
+                    card.textContent = '?';
+                });
+                canFlip = true;
+            }
+            
+            function flipCard() {
+                if (!canFlip || flippedCards.length >= 2 || this.classList.contains('flipped')) return;
+                
+                const index = this.getAttribute('data-index');
+                this.textContent = cards[index];
+                this.classList.add('flipped');
+                flippedCards.push(this);
+                
+                if (flippedCards.length === 2) {
+                    canFlip = false;
+                    checkForMatch();
+                }
+            }
+            
+            function checkForMatch() {
+                const [card1, card2] = flippedCards;
+                const index1 = card1.getAttribute('data-index');
+                const index2 = card2.getAttribute('data-index');
+                
+                if (cards[index1] === cards[index2]) {
+                    // Карточки совпали
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedCards.push(card1, card2);
+                    
+                    flippedCards = [];
+                    canFlip = true;
+                    
+                    // Проверяем, закончена ли игра
+                    if (matchedCards.length === cards.length) {
+                        status.textContent = 'Поздравляем! Вы нашли все пары!';
+                    }
+                } else {
+                    // Карточки не совпали
+                    setTimeout(() => {
+                        card1.textContent = '?';
+                        card2.textContent = '?';
+                        card1.classList.remove('flipped');
+                        card2.classList.remove('flipped');
+                        flippedCards = [];
+                        canFlip = true;
+                    }, 1000);
+                }
+            }
+            
+            return {
+                stop: function() {
+                    // Ничего не нужно делать для остановки этой игры
+                }
+            };
+        }
+
+        function loadPongGame(container) {
+            container.innerHTML = `
+                <canvas id="pong-canvas" width="600" height="400"></canvas>
+                <p>Управление: W/S - левая ракетка, стрелки вверх/вниз - правая ракетка</p>
+            `;
+            
+            const canvas = document.getElementById('pong-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const paddleWidth = 10;
+            const paddleHeight = 100;
+            const ballSize = 10;
+            
+            let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
+            let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
+            let ballX = canvas.width / 2;
+            let ballY = canvas.height / 2;
+            let ballSpeedX = 5;
+            let ballSpeedY = 5;
+            
+            let leftScore = 0;
+            let rightScore = 0;
+            
+            let upPressed = false;
+            let downPressed = false;
+            let wPressed = false;
+            let sPressed = false;
+            
+            let animationId;
+            
+            function draw() {
+                // Очистка холста
+                ctx.fillStyle = 'black';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Рисуем разделительную линию
+                ctx.strokeStyle = 'white';
+                ctx.setLineDash([5, 15]);
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 0);
+                ctx.lineTo(canvas.width / 2, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Рисуем ракетки
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, leftPaddleY, paddleWidth, paddleHeight);
+                ctx.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight);
+                
+                // Рисуем мяч
+                ctx.beginPath();
+                ctx.arc(ballX, ballY, ballSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Рисуем счет
+                ctx.font = '32px Arial';
+                ctx.fillText(leftScore, canvas.width / 4, 50);
+                ctx.fillText(rightScore, 3 * canvas.width / 4, 50);
+            }
+            
+            function update() {
+                // Двигаем мяч
+                ballX += ballSpeedX;
+                ballY += ballSpeedY;
+                
+                // Отскок от верхней и нижней границы
+                if (ballY - ballSize < 0 || ballY + ballSize > canvas.height) {
+                    ballSpeedY = -ballSpeedY;
+                }
+                
+                // Отскок от ракеток
+                if (
+                    ballX - ballSize < paddleWidth &&
+                    ballY > leftPaddleY &&
+                    ballY < leftPaddleY + paddleHeight
+                ) {
+                    ballSpeedX = -ballSpeedX * 1.1; // Увеличиваем скорость после отскока
+                    ballSpeedY *= 1.1;
+                }
+                
+                if (
+                    ballX + ballSize > canvas.width - paddleWidth &&
+                    ballY > rightPaddleY &&
+                    ballY < rightPaddleY + paddleHeight
+                ) {
+                    ballSpeedX = -ballSpeedX * 1.1;
+                    ballSpeedY *= 1.1;
+                }
+                
+                // Проверка на гол
+                if (ballX < 0) {
+                    rightScore++;
+                    resetBall();
+                }
+                
+                if (ballX > canvas.width) {
+                    leftScore++;
+                    resetBall();
+                }
+                
+                // Двигаем ракетки
+                if (upPressed && rightPaddleY > 0) {
+                    rightPaddleY -= 7;
+                }
+                
+                if (downPressed && rightPaddleY < canvas.height - paddleHeight) {
+                    rightPaddleY += 7;
+                }
+                
+                if (wPressed && leftPaddleY > 0) {
+                    leftPaddleY -= 7;
+                }
+                
+                if (sPressed && leftPaddleY < canvas.height - paddleHeight) {
+                    leftPaddleY += 7;
+                }
+            }
+            
+            function resetBall() {
+                ballX = canvas.width / 2;
+                ballY = canvas.height / 2;
+                ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
+                ballSpeedY = 5 * (Math.random() > 0.5 ? 1 : -1);
+            }
+            
+            function gameLoop() {
+                update();
+                draw();
+                animationId = requestAnimationFrame(gameLoop);
+            }
+            
+            // Управление
+            document.addEventListener('keydown', function(e) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        upPressed = true;
+                        break;
+                    case 'ArrowDown':
+                        downPressed = true;
+                        break;
+                    case 'w':
+                        wPressed = true;
+                        break;
+                    case 's':
+                        sPressed = true;
+                        break;
+                }
+            });
+            
+            document.addEventListener('keyup', function(e) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        upPressed = false;
+                        break;
+                    case 'ArrowDown':
+                        downPressed = false;
+                        break;
+                    case 'w':
+                        wPressed = false;
+                        break;
+                    case 's':
+                        sPressed = false;
+                        break;
+                }
+            });
+            
+            gameLoop();
+            
+            return {
+                stop: function() {
+                    cancelAnimationFrame(animationId);
+                }
+            };
+        }
+
+        function loadHangmanGame(container) {
+            container.innerHTML = `
+                <div id="hangman-container">
+                    <h3>Виселица</h3>
+                    <div id="hangman-drawing" style="height: 150px; margin: 20px 0;"></div>
+                    <div id="hangman-word"></div>
+                    <div id="hangman-letters"></div>
+                    <button onclick="resetHangman()">Новая игра</button>
+                    <p id="hangman-message"></p>
+                </div>
+            `;
+            
+            const words = ['ПРОГРАММИРОВАНИЕ', 'КОМПЬЮТЕР', 'АЛГОРИТМ', 'ИНТЕРНЕТ', 'БРАУЗЕР', 'КЛАВИАТУРА', 'МОНИТОР', 'СЕРВЕР'];
+            let selectedWord = '';
+            let guessedLetters = [];
+            let wrongAttempts = 0;
+            const maxAttempts = 6;
+            
+            const wordDisplay = document.getElementById('hangman-word');
+            const lettersContainer = document.getElementById('hangman-letters');
+            const drawing = document.getElementById('hangman-drawing');
+            const message = document.getElementById('hangman-message');
+            
+            function initGame() {
+                selectedWord = words[Math.floor(Math.random() * words.length)];
+                guessedLetters = [];
+                wrongAttempts = 0;
+                
+                updateWordDisplay();
+                createLetters();
+                updateDrawing();
+                message.textContent = '';
+            }
+            
+            function updateWordDisplay() {
+                wordDisplay.textContent = selectedWord
+                    .split('')
+                    .map(letter => guessedLetters.includes(letter) ? letter : '_')
+                    .join(' ');
+                
+                // Проверка на победу
+                if (!wordDisplay.textContent.includes('_')) {
+                    message.textContent = 'Поздравляем! Вы выиграли!';
+                    disableLetters();
+                }
+            }
+            
+            function createLetters() {
+                lettersContainer.innerHTML = '';
+                
+                for (let i = 0; i < 33; i++) {
+                    const letter = String.fromCharCode(1040 + i); // Русские буквы от А до Я
+                    
+                    const letterElement = document.createElement('div');
+                    letterElement.className = 'hangman-letter';
+                    letterElement.textContent = letter;
+                    letterElement.addEventListener('click', () => guessLetter(letter));
+                    
+                    lettersContainer.appendChild(letterElement);
+                }
+            }
+            
+            function guessLetter(letter) {
+                if (guessedLetters.includes(letter) || wrongAttempts >= maxAttempts) return;
+                
+                guessedLetters.push(letter);
+                
+                if (selectedWord.includes(letter)) {
+                    updateWordDisplay();
+                } else {
+                    wrongAttempts++;
+                    updateDrawing();
+                    
+                    if (wrongAttempts >= maxAttempts) {
+                        message.textContent = `Игра окончена! Слово было: ${selectedWord}`;
+                        disableLetters();
+                    }
+                }
+                
+                // Помечаем использованную букву
+                const letterElements = lettersContainer.querySelectorAll('.hangman-letter');
+                letterElements.forEach(el => {
+                    if (el.textContent === letter) {
+                        el.classList.add('used');
+                    }
+                });
+            }
+            
+            function updateDrawing() {
+                drawing.innerHTML = '';
+                const ctx = drawing.getContext('2d');
+                
+                // Рисуем виселицу в зависимости от количества ошибок
+                if (wrongAttempts >= 1) {
+                    // Основание
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(50, 130, 100, 20);
+                }
+                
+                if (wrongAttempts >= 2) {
+                    // Столб
+                    ctx.fillRect(100, 30, 10, 100);
+                }
+                
+                if (wrongAttempts >= 3) {
+                    // Перекладина
+                    ctx.fillRect(100, 30, 60, 10);
+                }
+                
+                if (wrongAttempts >= 4) {
+                    // Веревка
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(155, 30, 2, 20);
+                }
+                
+                if (wrongAttempts >= 5) {
+                    // Голова
+                    ctx.beginPath();
+                    ctx.arc(156, 62, 10, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                if (wrongAttempts >= 6) {
+                    // Тело
+                    ctx.beginPath();
+                    ctx.moveTo(156, 72);
+                    ctx.lineTo(156, 110);
+                    ctx.stroke();
+                    
+                    // Руки
+                    ctx.beginPath();
+                    ctx.moveTo(156, 80);
+                    ctx.lineTo(136, 90);
+                    ctx.moveTo(156, 80);
+                    ctx.lineTo(176, 90);
+                    ctx.stroke();
+                    
+                    // Ноги
+                    ctx.beginPath();
+                    ctx.moveTo(156, 110);
+                    ctx.lineTo(136, 130);
+                    ctx.moveTo(156, 110);
+                    ctx.lineTo(176, 130);
+                    ctx.stroke();
+                }
+            }
+            
+            function disableLetters() {
+                const letterElements = lettersContainer.querySelectorAll('.hangman-letter');
+                letterElements.forEach(el => {
+                    el.classList.add('used');
+                });
+            }
+            
+            // Делаем функцию reset доступной глобально
+            window.resetHangman = initGame;
+            
+            initGame();
+            
+            return {
+                stop: function() {
+                    // Ничего не нужно делать для остановки этой игры
+                }
+            };
+        }
+
+        function loadBreakoutGame(container) {
+            container.innerHTML = `
+                <canvas id="breakout-canvas" width="480" height="320"></canvas>
+                <p>Управление: стрелки влево/вправо</p>
+            `;
+            
+            const canvas = document.getElementById('breakout-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const brickRowCount = 5;
+            const brickColumnCount = 9;
+            const brickWidth = 50;
+            const brickHeight = 20;
+            const brickPadding = 10;
+            const brickOffsetTop = 30;
+            const brickOffsetLeft = 30;
+            
+            const paddleHeight = 10;
+            const paddleWidth = 75;
+            
+            const ballRadius = 10;
+            
+            let score = 0;
+            let lives = 3;
+            let animationId;
+            
+            // Создаем кирпичи
+            const bricks = [];
+            for (let c = 0; c < brickColumnCount; c++) {
+                bricks[c] = [];
+                for (let r = 0; r < brickRowCount; r++) {
+                    bricks[c][r] = { x: 0, y: 0, status: 1 };
+                }
+            }
+            
+            // Мяч
+            let ball = {
+                x: canvas.width / 2,
+                y: canvas.height - 30,
+                dx: 4,
+                dy: -4
+            };
+            
+            // Платформа
+            let paddle = {
+                x: (canvas.width - paddleWidth) / 2,
+                y: canvas.height - paddleHeight - 10
+            };
+            
+            // Управление
+            let rightPressed = false;
+            let leftPressed = false;
+            
+            function drawBricks() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        if (bricks[c][r].status === 1) {
+                            const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                            const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                            
+                            bricks[c][r].x = brickX;
+                            bricks[c][r].y = brickY;
+                            
+                            ctx.beginPath();
+                            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                            ctx.fillStyle = `hsl(${r * 60}, 100%, 50%)`;
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+                }
+            }
+            
+            function drawBall() {
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
+                ctx.fillStyle = '#0095DD';
+                ctx.fill();
+                ctx.closePath();
+            }
+            
+            function drawPaddle() {
+                ctx.beginPath();
+                ctx.rect(paddle.x, paddle.y, paddleWidth, paddleHeight);
+                ctx.fillStyle = '#0095DD';
+                ctx.fill();
+                ctx.closePath();
+            }
+            
+            function drawScore() {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#0095DD';
+                ctx.fillText('Счет: ' + score, 8, 20);
+            }
+            
+            function drawLives() {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#0095DD';
+                ctx.fillText('Жизни: ' + lives, canvas.width - 65, 20);
+            }
+            
+            function collisionDetection() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        const brick = bricks[c][r];
+                        if (brick.status === 1) {
+                            if (
+                                ball.x > brick.x &&
+                                ball.x < brick.x + brickWidth &&
+                                ball.y > brick.y &&
+                                ball.y < brick.y + brickHeight
+                            ) {
+                                ball.dy = -ball.dy;
+                                brick.status = 0;
+                                score++;
+                                
+                                if (score === brickRowCount * brickColumnCount) {
+                                    alert('Поздравляем! Вы выиграли!');
+                                    document.location.reload();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            function movePaddle() {
+                if (rightPressed && paddle.x < canvas.width - paddleWidth) {
+                    paddle.x += 7;
+                } else if (leftPressed && paddle.x > 0) {
+                    paddle.x -= 7;
+                }
+            }
+            
+            function moveBall() {
+                // Отскок от стен
+                if (ball.x + ball.dx > canvas.width - ballRadius || ball.x + ball.dx < ballRadius) {
+                    ball.dx = -ball.dx;
+                }
+                
+                if (ball.y + ball.dy < ballRadius) {
+                    ball.dy = -ball.dy;
+                } else if (ball.y + ball.dy > canvas.height - ballRadius) {
+                    // Отскок от платформы
+                    if (ball.x > paddle.x && ball.x < paddle.x + paddleWidth) {
+                        ball.dy = -ball.dy;
+                    } else {
+                        lives--;
+                        
+                        if (lives === 0) {
+                            alert('Игра окончена!');
+                            document.location.reload();
+                        } else {
+                            ball.x = canvas.width / 2;
+                            ball.y = canvas.height - 30;
+                            ball.dx = 4;
+                            ball.dy = -4;
+                            paddle.x = (canvas.width - paddleWidth) / 2;
+                        }
+                    }
+                }
+                
+                ball.x += ball.dx;
+                ball.y += ball.dy;
+            }
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                drawBricks();
+                drawBall();
+                drawPaddle();
+                drawScore();
+                drawLives();
+                
+                collisionDetection();
+                movePaddle();
+                moveBall();
+            }
+            
+            // Управление
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = true;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = true;
+                }
+            });
+            
+            document.addEventListener('keyup', function(e) {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = false;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = false;
+                }
+            });
+            
+            function gameLoop() {
+                draw();
+                animationId = requestAnimationFrame(gameLoop);
+            }
+            
+            gameLoop();
+            
+            return {
+                stop: function() {
+                    cancelAnimationFrame(animationId);
+                }
+            };
+        }
+
+        function loadDinoGame(container) {
+            container.innerHTML = `
+                <div id="dino-container">
+                    <div id="dino"></div>
+                    <div id="cactus"></div>
+                </div>
+                <p>Управление: пробел или стрелка вверх - прыжок</p>
+                <p id="dino-score">Счет: 0</p>
+            `;
+            
+            const dino = document.getElementById('dino');
+            const cactus = document.getElementById('cactus');
+            const scoreDisplay = document.getElementById('dino-score');
+            
+            let isJumping = false;
+            let isGameOver = false;
+            let score = 0;
+            let gameSpeed = 5;
+            let cactusInterval;
+            let scoreInterval;
+            
+            function jump() {
+                if (isJumping || isGameOver) return;
+                
+                isJumping = true;
+                let jumpHeight = 0;
+                const jumpUp = setInterval(() => {
+                    if (jumpHeight >= 150) {
+                        clearInterval(jumpUp);
+                        
+                        // Падение вниз
+                        const fallDown = setInterval(() => {
+                            if (jumpHeight <= 0) {
+                                clearInterval(fallDown);
+                                isJumping = false;
+                                dino.style.bottom = '0';
+                            } else {
+                                jumpHeight -= 5;
+                                dino.style.bottom = jumpHeight + 'px';
+                            }
+                        }, 20);
+                    } else {
+                        jumpHeight += 5;
+                        dino.style.bottom = jumpHeight + 'px';
+                    }
+                }, 20);
+            }
+            
+            function moveCactus() {
+                let cactusPosition = 600;
+                cactus.style.right = '0';
+                
+                const moveInterval = setInterval(() => {
+                    if (cactusPosition <= 0) {
+                        cactusPosition = 600;
+                        cactus.style.right = '0';
+                    } else if (
+                        cactusPosition > 0 && cactusPosition < 80 &&
+                        parseInt(dino.style.bottom || '0') < 50
+                    ) {
+                        // Столкновение
+                        clearInterval(moveInterval);
+                        clearInterval(cactusInterval);
+                        clearInterval(scoreInterval);
+                        isGameOver = true;
+                        alert('Игра окончена! Ваш счет: ' + score);
+                    } else {
+                        cactusPosition -= gameSpeed;
+                        cactus.style.right = (600 - cactusPosition) + 'px';
+                    }
+                }, 20);
+                
+                return moveInterval;
+            }
+            
+            function updateScore() {
+                score++;
+                scoreDisplay.textContent = 'Счет: ' + score;
+                
+                // Увеличиваем скорость каждые 100 очков
+                if (score % 100 === 0) {
+                    gameSpeed += 1;
+                }
+            }
+            
+            function startGame() {
+                isGameOver = false;
+                score = 0;
+                gameSpeed = 5;
+                scoreDisplay.textContent = 'Счет: 0';
+                
+                cactusInterval = setInterval(moveCactus, 2000);
+                scoreInterval = setInterval(updateScore, 100);
+            }
+            
+            // Управление
+            document.addEventListener('keydown', function(e) {
+                if ((e.key === ' ' || e.key === 'ArrowUp') && !isGameOver) {
+                    jump();
+                }
+                
+                if (e.key === ' ' && isGameOver) {
+                    startGame();
+                }
+            });
+            
+            startGame();
+            
+            return {
+                stop: function() {
+                    clearInterval(cactusInterval);
+                    clearInterval(scoreInterval);
+                    isGameOver = true;
+                }
+            };
+        }
+
+        function loadMinesweeperGame(container) {
+            container.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Сапер</h3>
+                    <div style="margin: 10px 0;">
+                        <button onclick="startMinesweeper(8, 8, 10)">Легкий</button>
+                        <button onclick="startMinesweeper(12, 12, 20)">Средний</button>
+                        <button onclick="startMinesweeper(16, 16, 40)">Сложный</button>
+                    </div>
+                    <div id="minesweeper-board" style="display: inline-block; margin: 20px 0;"></div>
+                    <p id="minesweeper-status">Выберите уровень сложности</p>
+                </div>
+            `;
+            
+            const board = document.getElementById('minesweeper-board');
+            const status = document.getElementById('minesweeper-status');
+            
+            let rows = 0;
+            let cols = 0;
+            let minesCount = 0;
+            let revealedCount = 0;
+            let minePositions = [];
+            let boardData = [];
+            let gameOver = false;
+            
+            function startMinesweeper(r, c, m) {
+                rows = r;
+                cols = c;
+                minesCount = m;
+                revealedCount = 0;
+                minePositions = [];
+                boardData = [];
+                gameOver = false;
+                
+                board.innerHTML = '';
+                board.style.gridTemplateColumns = `repeat(${cols}, 30px)`;
+                board.style.display = 'grid';
+                board.style.gap = '2px';
+                
+                status.textContent = `Осталось мин: ${minesCount}`;
+                
+                // Инициализация доски
+                for (let i = 0; i < rows; i++) {
+                    boardData[i] = [];
+                    for (let j = 0; j < cols; j++) {
+                        boardData[i][j] = {
+                            isMine: false,
+                            isRevealed: false,
+                            isFlagged: false,
+                            neighborMines: 0
+                        };
+                        
+                        const cell = document.createElement('div');
+                        cell.style.width = '30px';
+                        cell.style.height = '30px';
+                        cell.style.backgroundColor = '#ddd';
+                        cell.style.display = 'flex';
+                        cell.style.justifyContent = 'center';
+                        cell.style.alignItems = 'center';
+                        cell.style.cursor = 'pointer';
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        
+                        cell.addEventListener('click', () => revealCell(i, j));
+                        cell.addEventListener('contextmenu', (e) => {
+                            e.preventDefault();
+                            toggleFlag(i, j);
+                        });
+                        
+                        board.appendChild(cell);
+                    }
+                }
+                
+                // Размещение мин
+                let minesPlaced = 0;
+                while (minesPlaced < minesCount) {
+                    const row = Math.floor(Math.random() * rows);
+                    const col = Math.floor(Math.random() * cols);
+                    
+                    if (!boardData[row][col].isMine) {
+                        boardData[row][col].isMine = true;
+                        minePositions.push({row, col});
+                        minesPlaced++;
+                    }
+                }
+                
+                // Подсчет мин вокруг каждой клетки
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        if (!boardData[i][j].isMine) {
+                            let count = 0;
+                            
+                            for (let di = -1; di <= 1; di++) {
+                                for (let dj = -1; dj <= 1; dj++) {
+                                    if (di === 0 && dj === 0) continue;
+                                    
+                                    const ni = i + di;
+                                    const nj = j + dj;
+                                    
+                                    if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && boardData[ni][nj].isMine) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            
+                            boardData[i][j].neighborMines = count;
+                        }
+                    }
+                }
+            }
+            
+            function revealCell(row, col) {
+                if (gameOver || boardData[row][col].isRevealed || boardData[row][col].isFlagged) return;
+                
+                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                boardData[row][col].isRevealed = true;
+                
+                if (boardData[row][col].isMine) {
+                    // Игрок наступил на мину
+                    cell.style.backgroundColor = 'red';
+                    cell.textContent = '💣';
+                    gameOver = true;
+                    revealAllMines();
+                    status.textContent = 'Игра окончена! Вы проиграли.';
+                } else {
+                    revealedCount++;
+                    cell.style.backgroundColor = '#fff';
+                    
+                    if (boardData[row][col].neighborMines > 0) {
+                        cell.textContent = boardData[row][col].neighborMines;
+                        // Разные цвета для разных чисел
+                        const colors = ['', 'blue', 'green', 'red', 'darkblue', 'brown', 'teal', 'black', 'gray'];
+                        cell.style.color = colors[boardData[row][col].neighborMines];
+                    } else {
+                        // Открываем соседние пустые клетки
+                        for (let di = -1; di <= 1; di++) {
+                            for (let dj = -1; dj <= 1; dj++) {
+                                if (di === 0 && dj === 0) continue;
+                                
+                                const ni = row + di;
+                                const nj = col + dj;
+                                
+                                if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && !boardData[ni][nj].isRevealed) {
+                                    revealCell(ni, nj);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Проверка на победу
+                    if (revealedCount === rows * cols - minesCount) {
+                        gameOver = true;
+                        flagAllMines();
+                        status.textContent = 'Поздравляем! Вы победили!';
+                    }
+                }
+            }
+            
+            function toggleFlag(row, col) {
+                if (gameOver || boardData[row][col].isRevealed) return;
+                
+                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                
+                if (boardData[row][col].isFlagged) {
+                    boardData[row][col].isFlagged = false;
+                    cell.textContent = '';
+                    cell.style.backgroundColor = '#ddd';
+                } else {
+                    boardData[row][col].isFlagged = true;
+                    cell.textContent = '🚩';
+                    cell.style.backgroundColor = '#ffeb3b';
+                }
+            }
+            
+            function revealAllMines() {
+                minePositions.forEach(pos => {
+                    const cell = document.querySelector(`[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                    if (!boardData[pos.row][pos.col].isFlagged) {
+                        cell.textContent = '💣';
+                        cell.style.backgroundColor = '#ff9999';
+                    }
+                });
+            }
+            
+            function flagAllMines() {
+                minePositions.forEach(pos => {
+                    const cell = document.querySelector(`[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                    if (!boardData[pos.row][pos.col].isFlagged) {
+                        boardData[pos.row][pos.col].isFlagged = true;
+                        cell.textContent = '🚩';
+                        cell.style.backgroundColor = '#ffeb3b';
+                    }
+                });
+            }
+            
+            // Делаем функцию start доступной глобально
+            window.startMinesweeper = startMinesweeper;
+            
+            return {
+                stop: function() {
+                    // Ничего не нужно делать для остановки этой игры
+                }
+            };
+        }
+
+        function loadFlappyGame(container) {
+            container.innerHTML = `
+                <canvas id="flappy-canvas" width="400" height="600"></canvas>
+                <p>Управление: пробел или клик мышью - прыжок</p>
+                <p id="flappy-score">Счет: 0</p>
+            `;
+            
+            const canvas = document.getElementById('flappy-canvas');
+            const ctx = canvas.getContext('2d');
+            const scoreDisplay = document.getElementById('flappy-score');
+            
+            const bird = {
+                x: 100,
+                y: 300,
+                radius: 20,
+                velocity: 0,
+                gravity: 0.5,
+                jump: -10
+            };
+            
+            const pipes = [];
+            const pipeWidth = 60;
+            const pipeGap = 150;
+            const pipeSpeed = 3;
+            let pipeTimer = 0;
+            let score = 0;
+            let gameOver = false;
+            let animationId;
+            
+            function drawBird() {
+                ctx.beginPath();
+                ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFD700';
+                ctx.fill();
+            }
+            
+            function drawPipes() {
+                ctx.fillStyle = '#4CAF50';
+                pipes.forEach(pipe => {
+                    // Верхняя труба
+                    ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+                    
+                    // Нижняя труба
+                    ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
+                });
+            }
+            
+            function updateBird() {
+                bird.velocity += bird.gravity;
+                bird.y += bird.velocity;
+                
+                // Проверка на столкновение с землей или потолком
+                if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) {
+                    endGame();
+                }
+            }
+            
+            function updatePipes() {
+                // Генерация новых труб
+                pipeTimer++;
+                if (pipeTimer > 100) {
+                    const topHeight = Math.floor(Math.random() * (canvas.height - pipeGap - 100)) + 50;
+                    pipes.push({
+                        x: canvas.width,
+                        top: topHeight,
+                        bottom: topHeight + pipeGap,
+                        passed: false
+                    });
+                    pipeTimer = 0;
+                }
+                
+                // Движение труб
+                for (let i = pipes.length - 1; i >= 0; i--) {
+                    pipes[i].x -= pipeSpeed;
+                    
+                    // Проверка на столкновение с птицей
+                    if (
+                        bird.x + bird.radius > pipes[i].x &&
+                        bird.x - bird.radius < pipes[i].x + pipeWidth &&
+                        (bird.y - bird.radius < pipes[i].top || bird.y + bird.radius > pipes[i].bottom)
+                    ) {
+                        endGame();
+                    }
+                    
+                    // Подсчет очков
+                    if (!pipes[i].passed && bird.x > pipes[i].x + pipeWidth) {
+                        pipes[i].passed = true;
+                        score++;
+                        scoreDisplay.textContent = 'Счет: ' + score;
+                    }
+                    
+                    // Удаление труб за пределами экрана
+                    if (pipes[i].x + pipeWidth < 0) {
+                        pipes.splice(i, 1);
+                    }
+                }
+            }
+            
+            function endGame() {
+                gameOver = true;
+                cancelAnimationFrame(animationId);
+                alert('Игра окончена! Ваш счет: ' + score);
+            }
+            
+            function gameLoop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (!gameOver) {
+                    updateBird();
+                    updatePipes();
+                    
+                    drawPipes();
+                    drawBird();
+                    
+                    animationId = requestAnimationFrame(gameLoop);
+                }
+            }
+            
+            function jump() {
+                if (gameOver) {
+                    // Перезапуск игры
+                    bird.y = 300;
+                    bird.velocity = 0;
+                    pipes.length = 0;
+                    pipeTimer = 0;
+                    score = 0;
+                    scoreDisplay.textContent = 'Счет: 0';
+                    gameOver = false;
+                    gameLoop();
+                } else {
+                    bird.velocity = bird.jump;
+                }
+            }
+            
+            // Управление
+            document.addEventListener('keydown', function(e) {
+                if (e.key === ' ') {
+                    jump();
+                }
+            });
+            
+            canvas.addEventListener('click', jump);
+            
+            gameLoop();
+            
+            return {
+                stop: function() {
+                    cancelAnimationFrame(animationId);
+                    gameOver = true;
+                }
+            };
+        }
     </script>
 </body>
 </html>
